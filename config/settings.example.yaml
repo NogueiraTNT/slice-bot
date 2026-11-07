@@ -1,0 +1,21 @@
+# Sally Cibote — exemplo de settings (PC-Daniel + Ollama na VPS)
+ollama:
+  # Deixe vazio até o Daniel passar a URL da VPS.
+  # Preferir SALLY_OLLAMA_BASE_URL / OLLAMA_HOST no .env
+  base_url: ""
+  model: llama3.2
+  timeout_s: 60
+  # Pipecat usa o path OpenAI-compat: {base_url}/v1
+  openai_compat_suffix: /v1
+
+voice:
+  sample_rate: 16000
+  channels: 1
+  barge_in: true
+  # Headphones primeiro; AEC speaker aberto = depois
+  prefer_headphones: true
+
+n8n:
+  # Fora do escopo desta etapa (não configurar agora)
+  enabled: false
+  webhook_url: ""
