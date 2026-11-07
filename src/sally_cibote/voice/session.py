@@ -37,6 +37,7 @@ class FullDuplexSession:
                 voice=v.tts_voice,
                 edge_rate=v.tts_rate,
                 system_rate=v.tts_system_rate,
+                enabled=v.tts_enabled,
             )
         if self.stt is None:
             self.stt = WhisperSTT(

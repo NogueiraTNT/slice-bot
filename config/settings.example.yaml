@@ -16,6 +16,7 @@ voice:
   prefer_headphones: true
 
 n8n:
-  # Fora do escopo desta etapa (não configurar agora)
-  enabled: false
+  enabled: true
+  # Prefer SALLY_N8N_WEBHOOK_URL in .env
   webhook_url: ""
+  timeout_s: 45

@@ -64,6 +64,7 @@ class VoiceConfig:
     stt_device: str
     stt_language: str
     # TTS — edge (neural) default; system = fallback OS
+    tts_enabled: bool
     tts_backend: str
     tts_voice: str
     tts_rate: str  # edge-tts rate, e.g. "+0%" / "-5%"
@@ -78,10 +79,22 @@ class LifConfig:
 
 
 @dataclass(frozen=True)
+class N8nConfig:
+    enabled: bool
+    webhook_url: str
+    timeout_s: float
+
+    @property
+    def configured(self) -> bool:
+        return self.enabled and bool(self.webhook_url)
+
+
+@dataclass(frozen=True)
 class Settings:
     ollama: OllamaConfig
     voice: VoiceConfig
     lif: LifConfig
+    n8n: N8nConfig
     project_root: Path
 
 
@@ -104,6 +117,7 @@ def load_settings() -> Settings:
         stt_model=os.getenv("SALLY_STT_MODEL", "base").strip() or "base",
         stt_device=os.getenv("SALLY_STT_DEVICE", "cpu").strip() or "cpu",
         stt_language=os.getenv("SALLY_STT_LANGUAGE", "pt").strip() or "pt",
+        tts_enabled=_bool("SALLY_TTS_ENABLED", "0"),
         tts_backend=os.getenv("SALLY_TTS_BACKEND", "edge").strip() or "edge",
         tts_voice=os.getenv("SALLY_TTS_VOICE", "pt-BR-FranciscaNeural").strip()
         or "pt-BR-FranciscaNeural",
@@ -118,4 +132,9 @@ def load_settings() -> Settings:
         store_path=store,
         stage=os.getenv("SALLY_LIF_STAGE", "newborn").strip() or "newborn",
     )
-    return Settings(ollama=ollama, voice=voice, lif=lif, project_root=_ROOT)
+    n8n = N8nConfig(
+        enabled=_bool("SALLY_N8N_ENABLED", "1"),
+        webhook_url=os.getenv("SALLY_N8N_WEBHOOK_URL", "").strip(),
+        timeout_s=float(os.getenv("SALLY_N8N_TIMEOUT", "45")),
+    )
+    return Settings(ollama=ollama, voice=voice, lif=lif, n8n=n8n, project_root=_ROOT)

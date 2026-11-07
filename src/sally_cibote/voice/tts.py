@@ -32,12 +32,13 @@ def _humanize_text(text: str) -> str:
 
 @dataclass
 class TTSPlayer:
-    """Fala texto. Backend: edge (default) | system | stub."""
+    """Fala texto. Backend: edge (default) | system | stub | muted."""
 
     backend: str = "edge"
     voice: str = "pt-BR-FranciscaNeural"
     edge_rate: str = "-5%"
     system_rate: int = 165
+    enabled: bool = True
     _speaking: bool = field(default=False, init=False)
     _cancel: threading.Event = field(default_factory=threading.Event, init=False)
     _lock: threading.Lock = field(default_factory=threading.Lock, init=False, repr=False)
@@ -51,6 +52,9 @@ class TTSPlayer:
     def speak(self, text: str, *, interruptible: bool = True) -> bool:
         text = _humanize_text(text)
         if not text:
+            return True
+        if not self.enabled or self.backend in ("off", "mute", "muted", "none"):
+            print(f"[tts] muted: {text}", flush=True)
             return True
         with self._lock:
             self._cancel.clear()
